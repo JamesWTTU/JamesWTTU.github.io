@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="theme-color" content="#1c1c1c">
+    <title>Weather App</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
+    <link rel="manifest" href="site.webmanifest">
+    <link href="https://cdn.jsdelivr.net/npm/bootswatch@4.5.2/dist/pulse/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+<body class="bg-dark">
+    <div class="d-flex justify-content-center align-items-center vh-100">
+        <div class="bg-secondary card col-12 col-md-7 col-lg-6">
+            <h1 class="text-center mb-4 text-primary">Weather Data For Cookeville</h1>
+            <div class="d-flex justify-content-between mb-4">
+                <div class="d-flex flex-column align-items-center mb-2">
+                    <i id="temperatureIcon" class="bi bi-thermometer" style="font-size: 3rem;"></i>
+                    <h3 id="temperature">Temperature: </h3>
+                </div>
+                <div class="d-flex flex-column align-items-center">
+                    <i id="humidityIcon" class="bi bi-droplet" style="font-size: 3rem;"></i>
+                    <h3 id="humidity">Humidity: </h3>
+                </div>
+                <div class="d-flex flex-column align-items-center mb-2">
+                    <i id="precipitationIcon" class="bi bi-sun" style="font-size: 3rem;"></i>
+                    <h3 id="precipitation">Precipitation: </h3>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <p>Weather data courtesy of <a href="https://open-meteo.com">Open-Meteo</a></p>
+    </footer>
+    <script src="app.js"></script>
+</body>
+</html>
