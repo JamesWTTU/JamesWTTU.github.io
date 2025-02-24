@@ -1,78 +1,102 @@
-const strAPIURL = 'https://api.open-meteo.com/v1/forecast?latitude=36.1682&longitude=-85.5016&hourly=temperature_2m,relative_humidity_2m,precipitation&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch&timezone=auto&forecast_days=1'
+const apiURL = 'https://api.open-meteo.com/v1/forecast?latitude=36.1628&longitude=-85.5016&hourly=temperature_2m,weathercode&temperature_unit=fahrenheit'
 
-async function fetchWeatherData() {
+const weatherDescriptions = {
+    0: 'Clear Sky',
+    1: 'Mainly Clear',
+    2: 'Partly Cloudy',
+    3: 'Overcast',
+    45: 'Fog',
+    48: 'Depositing Rime Fog',
+    51: 'Light Drizzle',
+    53: 'Moderate Drizzle',
+    55: 'Dense Drizzle',
+    56: 'Light Freezing Drizzle',
+    57: 'Dense Freezing Drizzle',
+    61: 'Light Rain',
+    63: 'Moderate Rain',
+    65: 'Heavy Rain',
+    66: 'Light Freezing Rain',
+    67: 'Heavy Freezing Rain',
+    71: 'Light Snowfall',
+    73: 'Moderate Snowfall',
+    75: 'Heavy Snowfall',
+    77: 'Snow Grains',
+    80: 'Light Rain Showers',
+    81: 'Moderate Rain Showers',
+    82: 'Violent Rain Showers',
+    85: 'Light Snow Showers',
+    86: 'Heavy Snow Showers',
+    95: 'Thunderstorm',
+    96: 'Thunderstorm with Hail',
+    99: 'Heavy Thunderstorm with Hail',
+}
+
+const weatherIcons = {
+    0: 'bi bi-sun',
+    1: 'bi bi-cloud-sun',
+    2: 'bi bi-cloud-sun',
+    3: 'bi bi-cloud',
+    45: 'bi bi-cloud-fog',
+    48: 'bi bi-cloud-fog',
+    51: 'bi bi-cloud-drizzle',
+    53: 'bi bi-cloud-drizzle',
+    55: 'bi bi-cloud-drizzle',
+    56: 'bi bi-cloud-drizzle',
+    57: 'bi bi-cloud-drizzle',
+    61: 'bi bi-cloud-rain',
+    63: 'bi bi-cloud-rain',
+    65: 'bi bi-cloud-rain',
+    66: 'bi bi-cloud-rain',
+    67: 'bi bi-cloud-rain',
+    71: 'bi bi-cloud-snow',
+    73: 'bi bi-cloud-snow',
+    75: 'bi bi-cloud-snow',
+    77: 'bi bi-cloud-snow',
+    80: 'bi bi-cloud-showers-heavy',
+    81: 'bi bi-cloud-showers-heavy',
+    82: 'bi bi-cloud-showers-heavy',
+    85: 'bi bi-cloud-snow-heavy',
+    86: 'bi bi-cloud-snow-heavy',
+    95: 'bi bi-cloud-lightning',
+    96: 'bi bi-cloud-lightning',
+    99: 'bi bi-cloud-lightning',
+}
+
+async function getWeatherData() {
     try {
-        const objResponse = await fetch(strAPIURL)
+        const objResponse = await fetch(apiURL)
 
         if (!objResponse.ok) {
-            throw new Error(`HTTP Error Status: ${objResponse.status}`)
+            throw new Error(`Error: ${objResponse.status}`)
         }
 
         const objData = await objResponse.json()
-        const currentTime = new Date()
-        const hour = currentTime.getHours()
+        const hour = new Date().getHours()
 
-        const temperature = objData.hourly.temperature_2m[hour]
-        const humidity = objData.hourly.relative_humidity_2m[hour]
-        const precipitation = objData.hourly.precipitation[hour]
+        const temp = objData.hourly.temperature_2m[hour]
+        const weatherCode = objData.hourly.weathercode[hour]
 
-        updateWeatherDisplay(temperature, humidity, precipitation)
-        updateWeatherIcons(temperature, humidity, precipitation)
-    } catch (objError) {
-        console.log('Error fetching objData:', objError)
-    }
-}
+        document.getElementById('temperature').textContent = `Temp: ${temp}°F`
 
-function updateWeatherDisplay(temperature, humidity, precipitation) {
-    document.getElementById('temperature').textContent = `Temperature: ${temperature}°F`
-    document.getElementById('humidity').textContent = `Humidity: ${humidity}%`
-    document.getElementById('precipitation').textContent = `Precipitation: ${precipitation} inches`
-}
+        const weatherDescription = weatherDescriptions[weatherCode]
+        document.getElementById('weather').textContent = `Weather: ${weatherDescription}`
 
-function updateWeatherIcons(temperature, humidity, precipitation) {
-    const temperatureIcon = document.querySelector('#temperatureIcon')
-    const humidityIcon = document.querySelector('#humidityIcon')
-    const precipitationIcon = document.querySelector('#precipitationIcon')
+        const tempIcon = document.querySelector('#temperatureIcon')
+        const weatherIcon = document.querySelector('#weatherIcon')
 
-    if (temperature < 30) {
-        temperatureIcon.className = 'bi bi-thermometer-low'
-        temperatureIcon.style.color = 'lightblue'
-    } else if (temperature >= 30 && temperature <= 80) {
-        temperatureIcon.className = 'bi bi-thermometer-half'
-        temperatureIcon.style.color = 'orange'
-    } else {
-        temperatureIcon.className = 'bi bi-thermometer-high'
-        temperatureIcon.style.color = 'red'
-    }
-
-    if (humidity >= 75) {
-        humidityIcon.className = 'bi bi-droplet-fill'
-        humidityIcon.style.color = 'blue'
-    } else if (humidity <= 50){
-        humidityIcon.className = 'bi bi-droplet-half'
-        humidityIcon.style.color = 'blue'
-    } else if (humidity = 0){
-        humidityIcon.className = 'bi bi-droplet'
-        humidityIcon.style.color = 'blue'
-    }
-
-    if (precipitation > 0) {
-        if (precipitation <= 0.02) {
-            precipitationIcon.className = 'bi bi-cloud-drizzle'
-            precipitationIcon.style.color = 'cyan'
-        } else if (precipitation <= 0.30) {
-            precipitationIcon.className = 'bi bi-cloud-rain'
-            precipitationIcon.style.color = 'cyan'
+        if (temp < 30) {
+            tempIcon.className = 'bi bi-thermometer-low text-primary'
+        } else if (temp <= 80) {
+            tempIcon.className = 'bi bi-thermometer-half text-primary'
         } else {
-            precipitationIcon.className = 'bi bi-cloud-rain-heavy'
-            precipitationIcon.style.color = 'cyan'
+            tempIcon.className = 'bi bi-thermometer-high text-primary'
         }
-    } else {
-        precipitationIcon.className = 'bi bi-cloud-sun'
-        precipitationIcon.style.color = 'yellow'
+
+        const weatherIconClass = weatherIcons[weatherCode]
+        weatherIcon.className = `${weatherIconClass} text-primary`
+    } catch (error) {
+        console.log('Error:', error)
     }
 }
 
-document.addEventListener('DOMContentLoaded', function() {
-    fetchWeatherData()
-})
+getWeatherData()
